@@ -24,7 +24,7 @@ class Author(Document):
     description = StringField(max_length=5000)
 
 
-class Qoute(Document):
+class Quote(Document):
     quote = StringField(max_length=220, required=True)
     author = ReferenceField(Author)
     tags = ListField(StringField(max_length=30))
@@ -42,5 +42,7 @@ if __name__ == '__main__':
         data = json.load(file)
 
     for item in data:
-        qoute = Qoute(**item)
-        qoute.save()
+        author_name = item.get('author')
+        author = Author.objects.get(fullname=author_name) if author_name else None
+        quote = Quote(author=author, quote=item['quote'], tags=item.get('tags'))
+        quote.save()
